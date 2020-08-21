@@ -8,6 +8,9 @@ export default {
 
         Vue.prototype.$date = formatDate
         Vue.prototype.$currency = formatMoney
+        Vue.prototype.$time = value => {
+            return formatDate(value, 'YYYY-MM-DD HH:mm:ss')
+        } 
 
         Vue.prototype.$cookie = {
             set: addCookie,

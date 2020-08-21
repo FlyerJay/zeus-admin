@@ -6,8 +6,7 @@ const $vm = new Vue()
 
 axios.defaults.timeout = 50000
 axios.defaults.headers.post['Content-Type'] = 'application/json'
-
-axios.defaults.baseURL = '/api/v1/admin'
+axios.defaults.baseURL = '/zues/api'
 
 // 添加一个响应拦截器
 axios.interceptors.response.use(

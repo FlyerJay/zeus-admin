@@ -4,7 +4,8 @@
             <transition name="logo">
                 <div class="header-logo" v-show="!isCollapse">
                     <div class="title">
-                        Admin
+                        <img src="./assets/images/favicon.png" alt="">
+                        <!-- <span>宙斯采销系统</span> -->
                     </div>
                 </div>
             </transition>
@@ -14,7 +15,8 @@
             <div class="header-right">
                 <a class="header-btn fl">
                     <i class="el-icon-user-solid"></i>
-                    <span>用户名</span>
+                    <span>{{ companyObj[userInfo.comId] }} |</span>
+                    <span>{{ userInfo.userName }}</span>
                 </a>
                 <a class="header-btn fl" @click="logout">
                     <i class="el-icon-s-tools"></i>
@@ -44,6 +46,7 @@
 <script>
 import MenuItem from '@/components/MenuItem'
 import menu from './assets/json/menu'
+import { mapActions, mapState } from 'vuex'
 
 export default {
     name: 'App',
@@ -55,6 +58,22 @@ export default {
     computed: {
         menuData () {
             return [menu.employ]
+        },
+
+        ...mapState('company', {
+            companyList: state => state.companyList
+        }),
+
+        ...mapState('user', {
+            userInfo: state => state.userInfo
+        }),
+
+        companyObj () {
+            const obj = {}
+            this.companyList.forEach(item => {
+                obj[item.comId] = item.comName
+            })
+            return obj
         }
     },
 
@@ -76,10 +95,14 @@ export default {
     },
 
     created () {
-
+        this.companyListX()
+        this.userInfoX()
     },
 
     methods: {
+        ...mapActions('company', ['companyListX']),
+        ...mapActions('user', ['userInfoX']),
+
         toggleMenu () {
             this.isCollapse = !this.isCollapse
         },
@@ -117,12 +140,26 @@ $menu-background-color: white;
         }
 
         .title {
-            display: block;
+            display: flex;
             text-align: center;
             width: $menu-width;
             font-size: 18px;
             color: $neut2;
             font-weight: bold;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            height: 60px;
+
+            img {
+                width: 35px;
+                height: 35px;
+            }
+
+            span {
+                font-size: 16px;
+                margin-left: 5px;
+            }
         }
 
         @keyframes reduce {

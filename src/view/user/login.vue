@@ -5,7 +5,7 @@
 
         <!-- 口号 -->
         <div class="slogan">
-            做<span class="important">领先的</span>钢铁贸易商
+            <!-- 做<span class="important">领先的</span>钢铁贸易商 -->
         </div>
 
         <el-card shadow="hover" class="login-card">
@@ -16,19 +16,23 @@
             <el-form :model="form" status-icon :rules="rules" ref="form">
                 <el-form-item prop="userId">
                     <el-input v-model="form.userId" @keyup.enter.native="submitForm" placeholder="请输入账号">
-                        <template #prepend><i class="iconfont icon-account"></i></template>
                     </el-input>
                 </el-form-item>
 
                 <el-form-item prop="password">
                     <el-input type="password" v-model="form.password" autocomplete="off" placeholder="输入登录密码">
-                        <template #prepend><i class="iconfont icon-lock"></i></template>
                     </el-input>
                 </el-form-item>
 
                 <el-form-item prop="comId">
-                    <el-select type="password" v-model="form.comId" autocomplete="off" placeholder="请选择公司">
-                        <template #prepend><i class="iconfont icon-lock"></i></template>
+                    <el-select type="password" v-model="form.comId" autocomplete="off" placeholder="请选择公司" style="width: 100%">
+                        <el-option
+                            v-for="(item, index) in companyList"
+                            :key="index"
+                            :value="item.comId"
+                            :label="item.comName"
+                            >
+                        </el-option>
                     </el-select>
                 </el-form-item>
 
@@ -40,11 +44,30 @@
 
         <!-- 页脚 -->
         <div class="footer">
+            <div class="regular">
+                <div>联系电话：
+                    <span>58711629</span>
+                    <span>58700476</span>
+                    <span>58798979</span>
+                    <span>58700476</span>
+                </div>
 
+                <div>
+                    <span>服务监督：13390928886</span>
+                </div>
+
+                <div>
+                    <span>受理时间：8:00-18:00</span>
+                </div>
+            </div>
+
+            <div class="icp">金ICP备</div>
         </div>
     </div>
 </template>
 <script>
+import { mapState, mapActions } from 'vuex'
+
 export default {
     name: 'login',
 
@@ -81,11 +104,39 @@ export default {
         }
     },
 
+    computed: {
+        ...mapState('company', {
+            companyList: state => state.companyList
+        })
+    },
+
     methods: {
+        ...mapActions('user', ['userLoginX']),
+
         async submitForm () {
-            const valid = await this.$refs['form'].validate()
-            if (!valid) return
-            this.isLoading = true
+            try {
+                const valid = await this.$refs['form'].validate()
+                if (!valid) return
+                this.isLoading = true
+                const response = await this.userLoginX(this.form)
+                this.isLoading = false
+                if (response.code === 200) {
+                    this.$router.replace('/')
+                } else {
+                    this.$message({
+                        type: 'error',
+                        message: response.msg
+                    })
+                }
+            } catch (exp) {
+                this.isLoading = false
+                if (exp.message) {
+                    this.$message({
+                        type: 'error',
+                        message: exp.message
+                    })
+                }
+            }
         }
     }
 }
@@ -151,11 +202,37 @@ export default {
         width: 100%;
         box-sizing: border-box;
         background-color: rgba(0, 0, 0, 0.9);
-        display: flex;
-        flex-direction: row;
-        justify-content: space-around;
         color: #ddd;
         padding: 0 15%;
+
+        .regular {
+            font-size: 12px;
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            width: 100%;
+            margin-top: 12px;
+
+            >div {
+                width: 33.33%;
+                text-align: center;
+            }
+
+            span {
+                margin-right: 10px;
+                cursor: pointer;
+                
+                &:hover {
+                    color: $warning;
+                }
+            }
+        }
+
+        .icp {
+            margin-top: 5px;
+            font-size: 12px;
+            text-align: center;
+        }
     }
 }
 </style>

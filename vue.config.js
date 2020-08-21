@@ -9,8 +9,8 @@ module.exports = {
         disableHostCheck: true,
 
         proxy: {
-            '/api/v1/admin': {
-                target: 'http://127.0.0.1:7001'
+            '/zues/api': {
+                target: 'https://www.kxzeus.com'
             }
         }
     },
