@@ -8,7 +8,16 @@
                 pagination
                 :page-size="pagination.pageSize"
                 :total="pagination.total"
-                @current-change="onPageChange">
+                @current-change="onPageChange"
+                @selection-change="selectionChange">
+                <template slot="append" v-if="dataList.length !== 0">
+                    <div class="custom-summary">
+                        已选商品(含运费)：{{ checkedAmount | currency }}
+                        (吨位：{{ checkedWeight | currency }})
+
+                        <el-button :disabled="checkedAmount === 0" type="warning" style="margin-left: 20px" size="mini" icon="el-icon-check" @click="submitOrder">提交</el-button>
+                    </div>
+                </template>
             </filter-table>
         </div>
     </div>
@@ -108,16 +117,39 @@ export default {
                 }, {
                     field: 'comment',
                     name: '备注'
-                }, {
-                    field: 'operate',
-                    name: '操作'
                 }
-            ]
+            ],
+            checkedData: []
+        }
+    },
+
+    created () {
+        this.search()
+    },
+
+    computed: {
+        checkedAmount () {
+            return this.checkedData.reduce((a, b) => a + (Number(b.totalPrice) || 0), 0)
+        },
+
+        checkedWeight () {
+            const total = this.checkedData.reduce((a, b) => {
+                const specArr = b.spec.split('*')
+                const height = Number(specArr[0])
+                const width = Number(specArr[1])
+                const land = Number(specArr[2])
+                const long = Number(b.long) ? Number(b.long) : 6
+                const per = Number(b.perAmount)
+                const perimeter = 2 * height + 2 * width
+                const amount = Number(b.chartAmount)
+                return a + ((perimeter / 3.14 - land) * land * long * 0.02466 * amount * per) / 1000
+            }, 0)
+            return Number(total.toFixed(2))
         }
     },
 
     methods: {
-        ...mapActions('price', ['cartListX']),
+        ...mapActions('price', ['cartListX', 'createOrderX']),
 
         search () {
             this.pagination.page = 1
@@ -130,12 +162,6 @@ export default {
         },
 
         async getCartList () {
-            if (!this.searchForm.searchData) {
-                return this.$message({
-                    type: 'error',
-                    message: '查询内容不可为空'
-                })
-            }
             try {
                 this.isLoading = true
                 const response = await this.cartListX({
@@ -155,7 +181,47 @@ export default {
             } catch (exp) {
                 this.isLoading = false
             }
+        },
+
+        selectionChange (selection) {
+            this.checkedData = selection
+        },
+
+        async submitOrder () {
+            try {
+                await this.$confirm('确认提交所选的货物？', '提示')
+                const response = await this.createOrderX({
+                    supplierInventoryIds: this.checkedData,
+                    orderWeight: this.checkedWeight,
+                    orderPrice: this.checkedAmount,
+                    orderAdjust: 0
+                })
+                if (response.code === 200) {
+                    this.$message({
+                        type: 'success',
+                        message: '提交成功'
+                    })
+                    this.getCartList()
+                } else {
+                    this.$message({
+                        type: 'error',
+                        message: response.msg
+                    })
+                }
+            } catch (exp) {
+                console.log(exp)
+            }
         }
     }
 }
 </script>
+<style lang="scss">
+    .price-cart {
+        .custom-summary {
+            height: 46px;
+            line-height: 46px;
+            padding: 0 15px;
+            background-color: $neut4;
+        }
+    }
+</style>

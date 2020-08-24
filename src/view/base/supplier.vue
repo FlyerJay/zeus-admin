@@ -13,7 +13,7 @@
                 </el-form-item>
 
                 <el-form-item>
-                    <el-button type="primary" @click="search" icon="el-icon-search">查询</el-button>
+                    <el-button type="primary" @click="search" :loading="isLoading" icon="el-icon-search">查询</el-button>
                 </el-form-item>
             </el-form>
         </div>
@@ -29,6 +29,27 @@
                 @current-change="onPageChange">
             </filter-table>
         </div>
+
+        <el-dialog :visible.sync="updateVisible" title="修改供应商信息" width="500px" @close="closeUpdateHandler">
+            <el-form :model="updateForm" ref="updateForm" label-position="left" :rules="rules" label-width="80px">
+                <el-form-item prop="supplierName" label="供应商">
+                    <el-input v-model="updateForm.supplierName" placeholder="请输入" disabled></el-input>
+                </el-form-item>
+
+                <el-form-item prop="address" label="地址">
+                    <el-input v-model="updateForm.address" placeholder="请输入" disabled></el-input>
+                </el-form-item>
+
+                <el-form-item prop="benifit" label="优惠">
+                    <el-input v-model="updateForm.benifit" placeholder="请输入"></el-input>
+                </el-form-item>
+            </el-form>
+
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="cancelUpdate">取消</el-button>
+                <el-button type="primary" @click="confirmUpdate" :loading="operateLoading">确定</el-button>
+            </span>
+        </el-dialog>
     </div>
 </template>
 <script>
@@ -40,6 +61,7 @@ export default {
     data () {
         return {
             isLoading: false,
+            operateLoading: false,
             searchForm: {
                 supplierName: '',
                 address: ''
@@ -105,8 +127,32 @@ export default {
                             })
                         ])
                     }
+                }, {
+                    field: 'operate',
+                    name: '操作',
+                    render: (h, { row }) => {
+                        return h('el-button', {
+                            props: {
+                                size: 'small',
+                                type: 'warning'
+                            },
+                            on: {
+                                click: () => {
+                                    this.updateSupplier(row)
+                                }
+                            }
+                        }, '修改')
+                    }
                 }
-            ]
+            ],
+            updateVisible: false,
+            updateForm: {
+                supplierName: '',
+                address: '',
+                benifit: '',
+                supplierId: ''
+            },
+            rules: {}
         }
     },
 
@@ -122,7 +168,7 @@ export default {
     },
 
     methods: {
-        ...mapActions('base', ['addressListX', 'supplierListX', 'openSupplierX', 'closeSupplierX']),
+        ...mapActions('base', ['addressListX', 'supplierListX', 'openSupplierX', 'closeSupplierX', 'updateSupplierX']),
 
         search () {
             this.pagination.page = 1
@@ -155,6 +201,51 @@ export default {
             } else {
                 this.closeSupplierX({supplierId})
             }
+        },
+
+        updateSupplier (row) {
+            this.updateVisible = true
+            this.$nextTick(() => {
+                this.updateForm.supplierId = row.supplierId
+                this.updateForm.benifit = row.benifit
+                this.updateForm.supplierName = row.supplierName
+                this.updateForm.address = row.address
+            })
+        },
+
+        // 确认修改
+        async confirmUpdate () {
+            try {
+                const valid = await this.$refs['updateForm'].validate()
+                if (!valid) return
+                this.operateLoading = true
+                const response = await this.updateSupplierX(this.updateForm)
+                this.operateLoading = false
+                if (response.code === 200) {
+                    this.$message({
+                        type: 'success',
+                        message: '修改成功'
+                    })
+                    this.updateVisible = false
+                    this.getSupplierList()
+                } else {
+                    this.$message({
+                        type: 'error',
+                        message: response.msg
+                    })
+                }
+            } catch (exp) {
+                this.operateLoading = false
+            }
+        },
+
+        // 取消设置
+        cancelUpdate () {
+            this.updateVisible = false
+        },
+
+        closeUpdateHandler () {
+            this.$refs['updateForm'].resetFields()
         }
     }
 }

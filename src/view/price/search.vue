@@ -25,7 +25,7 @@
                 </el-form-item>
 
                 <el-form-item>
-                    <el-button type="primary" @click="search" icon="el-icon-search">查询</el-button>
+                    <el-button type="primary" @click="search" :loading="isLoading" icon="el-icon-search">查询</el-button>
                 </el-form-item>
             </el-form>
         </div>
@@ -41,6 +41,23 @@
                 @current-change="onPageChange">
             </filter-table>
         </div>
+
+        <el-dialog :visible.sync="orderVisible" title="下单信息" width="500px" @close="closeOrderHandler">
+            <el-form :model="orderForm" ref="orderForm" label-position="left" :rules="rules" label-width="80px">
+                <el-form-item prop="chartAmount" label="数量">
+                    <el-input v-model="orderForm.chartAmount" placeholder="请输入"></el-input>
+                </el-form-item>
+
+                <el-form-item prop="comment" label="备注">
+                    <el-input v-model="orderForm.comment" placeholder="请输入" type="textarea" rows="3"></el-input>
+                </el-form-item>
+            </el-form>
+
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="cancelOrder">取消</el-button>
+                <el-button type="primary" @click="confirmOrder" :loading="operateLoading">确定</el-button>
+            </span>
+        </el-dialog>
     </div>
 </template>
 <script>
@@ -148,7 +165,18 @@ export default {
                         ])
                     }
                 }
-            ]
+            ],
+            orderVisible: false,
+            orderForm: {
+                supplierInventoryId: '',
+                chartAmount: '',
+                comment: ''
+            },
+            rules: {
+                chartAmount: [
+                    { required: true, message: '请输入下单数量', trigger: 'blur' }
+                ]
+            }
         }
     },
 
@@ -165,7 +193,7 @@ export default {
 
     methods: {
         ...mapActions('base', ['addressListX']),
-        ...mapActions('price', ['productListX']),
+        ...mapActions('price', ['productListX', 'addToCartX']),
 
         search () {
             this.pagination.page = 1
@@ -194,8 +222,45 @@ export default {
             }
         },
 
-        goOrder () {
+        goOrder (row) {
+            this.orderVisible = true
+            this.$nextTick(() => {
+                this.orderForm.supplierInventoryId = row.supplierInventoryId
+            })
+        },
 
+        // 确认修改
+        async confirmOrder () {
+            try {
+                const valid = await this.$refs['orderForm'].validate()
+                if (!valid) return
+                this.operateLoading = true
+                const response = await this.addToCartX(this.orderForm)
+                this.operateLoading = false
+                if (response.code === 200) {
+                    this.$message({
+                        type: 'success',
+                        message: '加入购物车成功'
+                    })
+                    this.orderVisible = false
+                } else {
+                    this.$message({
+                        type: 'error',
+                        message: response.msg
+                    })
+                }
+            } catch (exp) {
+                this.operateLoading = false
+            }
+        },
+
+        // 取消设置
+        cancelOrder () {
+            this.orderVisible = false
+        },
+
+        closeOrderHandler () {
+            this.$refs['orderForm'].resetFields()
         }
     }
 }

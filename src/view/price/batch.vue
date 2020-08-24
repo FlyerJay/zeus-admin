@@ -12,7 +12,7 @@
         </el-form>
 
         <div class="filter clearfix">
-           <el-button size="small" type="primary" icon="el-icon-search" @click="search">批量查询</el-button>
+           <el-button size="small" type="primary" icon="el-icon-search" @click="search" :loading="isLoading">批量查询</el-button>
         </div>
 
         <div v-loading="isLoading">
@@ -29,8 +29,6 @@
                 :columns="detailColumns"
                 border>
             </filter-table>
-
-
         </el-dialog>
     </div>
 </template>

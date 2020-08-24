@@ -61,7 +61,7 @@
                 </div>
             </div>
 
-            <div class="icp">金ICP备</div>
+            <!-- <div class="icp">金ICP备</div> -->
         </div>
     </div>
 </template>

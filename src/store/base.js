@@ -26,6 +26,10 @@ export default {
             return axios.get('/supplier/list', { params })
         },
 
+        updateSupplierX (store, params) {
+            return axios.post('/supplier/update', params)
+        },
+
         openSupplierX (store, params) {
             return axios.post('/supplier/open', params)
         },

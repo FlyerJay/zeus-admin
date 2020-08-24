@@ -25,7 +25,7 @@
                 </el-form-item>
 
                 <el-form-item>
-                    <el-button type="primary" @click="search" icon="el-icon-search">查询</el-button>
+                    <el-button type="primary" @click="search" :loading="isLoading" icon="el-icon-search">查询</el-button>
                 </el-form-item>
             </el-form>
         </div>
@@ -114,25 +114,26 @@ export default {
                         const inventoryAmount = Number(row.inventoryAmount)
                         return ((perimeter / 3.14 - land) * land * long * 0.02466 * amount * inventoryAmount / 1000).toFixed(2)
                     }
-                }, {
-                    field: 'operate',
-                    name: '操作',
-                    render: (h, { row }) => {
-                        return h('div', [
-                            h('el-button', {
-                                props: {
-                                    type: 'warning',
-                                    size: 'small'
-                                },
-                                on: {
-                                    click: () => {
-                                        this.updatePrice(row)
-                                    }
-                                }
-                            }, '修改')
-                        ])
-                    }
                 }
+                // {
+                //     field: 'operate',
+                //     name: '操作',
+                //     render: (h, { row }) => {
+                //         return h('div', [
+                //             h('el-button', {
+                //                 props: {
+                //                     type: 'warning',
+                //                     size: 'small'
+                //                 },
+                //                 on: {
+                //                     click: () => {
+                //                         this.updatePrice(row)
+                //                     }
+                //                 }
+                //             }, '修改')
+                //         ])
+                //     }
+                // }
             ],
             updateVisible: false,
             updateForm: {

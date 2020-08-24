@@ -20,6 +20,22 @@ export default {
 
         cartListX (store, params) {
             return axios.get('/chart/list', { params })
+        },
+
+        addToCartX (store, params) {
+            return axios.post('/chart/addToChart', params)
+        },
+
+        createOrderX (store, params) {
+            return axios.post('/order/add', params)
+        },
+
+        orderListX (store, params) {
+            return axios.get('/order/list', { params })
+        },
+
+        orderDetailX (store, params) {
+            return axios.get('/order/detail', { params })
         }
     }
 }
