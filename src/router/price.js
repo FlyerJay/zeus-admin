@@ -7,6 +7,14 @@ const routes = [
       path: '/price/batch',
       name: 'priceBatch',
       component: () => import('../view/price/batch')
+    }, {
+      path: '/price/cart',
+      name: 'priceCart',
+      component: () => import('../view/price/cart')
+    }, {
+      path: '/price/order',
+      name: 'priceOrder',
+      component: () => import('../view/price/order')
     }
   ]
   

@@ -17,7 +17,7 @@ export default {
         async companyListX ({ commit }, params) {
             const response = await axios.get('/company', { params })
             if (response && response.length > 0) {
-                commit('setCompanyList', response)
+                commit('setCompanyList', response.filter(item => item.comId === '10'))
             }
             return response
         }
