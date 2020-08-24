@@ -3,7 +3,7 @@
         "type": "subMenu",
         "parentCode": "",
         "menuCode": "price",
-        "menuName": "宙斯报价",
+        "menuName": "订单管理",
         "menuIcon": "el-icon-coin",
         "subMenus": [
             {

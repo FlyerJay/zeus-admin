@@ -11,6 +11,10 @@ const routes = [
       path: '/base/price',
       name: 'basePrice',
       component: () => import('../view/base/price')
+    }, {
+      path: '/base/inventory',
+      name: 'baseInventory',
+      component: () => import('../view/base/inventory')
     }
   ]
   

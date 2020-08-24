@@ -10,7 +10,7 @@
 
         <el-card shadow="hover" class="login-card">
             <template #header>
-                <p>奎鑫 | 采销系统</p>
+                <p>钢财有道</p>
             </template>
 
             <el-form :model="form" status-icon :rules="rules" ref="form">

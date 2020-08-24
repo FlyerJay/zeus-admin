@@ -48,6 +48,14 @@ export default {
 
         removeFreightX (store, params) {
             return axios.post('/freight/remove', params)
+        },
+
+        priceListX (store, params) {
+            return axios.get('/price/list', { params })
+        },
+
+        inventoryListX (store, params) {
+            return axios.get('/inventory/list', { params })
         }
     }
 }

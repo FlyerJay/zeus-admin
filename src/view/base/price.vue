@@ -1,7 +1,33 @@
 <template>
     <div class="base-freight page">
         <div class="filter clearfix">
-            <el-button type="primary" @click="createFreight" size="small" icon="el-icon-plus">添加设置</el-button>
+            <el-form ref="searchForm" :model="searchForm" size="small" inline>
+                <el-form-item prop="spec" label="规格">
+                    <el-input v-model="searchForm.spec" placeholder="支持关键词/模糊查询"></el-input>
+                </el-form-item>
+
+                <el-form-item label="类别" prop="type">
+                    <el-select v-model="searchForm.type" clearable>
+                        <el-option value="黑管">黑管</el-option>
+                        <el-option value="热镀锌">热镀锌</el-option>
+                        <el-option value="镀锌带">镀锌带</el-option>
+                    </el-select>
+                </el-form-item>
+
+                <el-form-item label="供应商名称" prop="supplierName">
+                    <el-input v-model="searchForm.supplierName" placeholder="支持关键词/模糊搜索"></el-input>
+                </el-form-item>
+
+                <el-form-item prop="address" label="所在地">
+                    <el-select v-model="searchForm.address" placeholder="全部" clearable>
+                        <el-option :label="item.address" :value="item.address" v-for="(item, index) in addressList" :key="index"></el-option>
+                    </el-select>
+                </el-form-item>
+
+                <el-form-item>
+                    <el-button type="primary" @click="search" icon="el-icon-search">查询</el-button>
+                </el-form-item>
+            </el-form>
         </div>
 
         <div v-loading="isLoading">
@@ -15,44 +41,10 @@
                 @current-change="onPageChange">
             </filter-table>
         </div>
-
-        <el-dialog :visible.sync="createVisible" title="添加运费" width="500px" @close="closeCreateHandler">
-            <el-form :model="createForm" ref="createForm" label-position="left" :rules="rules" label-width="80px">
-                <el-form-item prop="address" label="地址">
-                    <el-input v-model="createForm.address" placeholder="请输入"></el-input>
-                </el-form-item>
-
-                <el-form-item prop="freight" label="运费">
-                    <el-input v-model="createForm.freight" placeholder="请输入"></el-input>
-                </el-form-item>
-            </el-form>
-
-            <span slot="footer" class="dialog-footer">
-                <el-button @click="cancelCreate">取消</el-button>
-                <el-button type="primary" @click="confirmCreate" :loading="operateLoading">确定</el-button>
-            </span>
-        </el-dialog>
-
-        <el-dialog :visible.sync="updateVisible" title="修改运费" width="500px" @close="closeUpdateHandler">
-            <el-form :model="updateForm" ref="updateForm" label-position="left" :rules="rules" label-width="80px">
-                <el-form-item prop="address" label="地址">
-                    <el-input v-model="updateForm.address" placeholder="请输入"></el-input>
-                </el-form-item>
-
-                <el-form-item prop="freight" label="运费">
-                    <el-input v-model="updateForm.freight" placeholder="请输入"></el-input>
-                </el-form-item>
-            </el-form>
-
-            <span slot="footer" class="dialog-footer">
-                <el-button @click="cancelUpdate">取消</el-button>
-                <el-button type="primary" @click="confirmUpdate" :loading="operateLoading">确定</el-button>
-            </span>
-        </el-dialog>
     </div>
 </template>
 <script>
-import { mapActions } from 'vuex'
+import { mapState, mapActions } from 'vuex'
 
 export default {
     name: 'base-supplier',
@@ -62,6 +54,12 @@ export default {
             isLoading: false,
             operateLoading: false,
             dataList: [],
+            searchForm: {
+                spec: '',
+                type: '',
+                supplierName: '',
+
+            },
             pagination: {
                 page: 1,
                 pageSize: 10,
@@ -69,15 +67,20 @@ export default {
             },
             columns: [
                 {
-                    field: 'address',
-                    name: '地址'
-                }, {
-                    field: 'freight',
-                    name: '运费（元/吨）'
+                    field: 'spec',
+                    name: '规格'
                 }, {
                     field: 'lastUpdateTime',
-                    name: '更新时间',
-                    formatter: row => this.$time(row.lastUpdateTime)
+                    name: '最近更新时间'
+                }, {
+                    field: 'type',
+                    name: '类别'
+                }, {
+                    field: 'supplierName',
+                    name: '供应商'
+                }, {
+                    field: 'value',
+                    name: '出厂价（元/吨）'
                 }, {
                     field: 'operate',
                     name: '操作',
@@ -90,69 +93,55 @@ export default {
                                 },
                                 on: {
                                     click: () => {
-                                        this.updateFreight(row)
+                                        this.updatePrice(row)
                                     }
                                 }
-                            }, '修改'),
-                            h('el-button', {
-                                props: {
-                                    type: 'danger',
-                                    size: 'small'
-                                },
-                                on: {
-                                    click: () => {
-                                        this.removeFreight(row)
-                                    }
-                                }
-                            }, '删除')
+                            }, '修改')
                         ])
                     }
                 }
             ],
-            createVisible: false,
             updateVisible: false,
-            createForm: {
-                address: '',
-                freight: ''
-            },
             updateForm: {
-                address: '',
-                freight: '',
-                freightId: ''
-            },
-            rules: {
-                address: [
-                    { required: true, message: '请输入供应商所在地', trigger: 'blur' }
-                ],
-                freight: [
-                    { required: true, message: '请输入运费', trigger: 'blur' }
-                ]
+                value: '',
+                supplierValueId: ''
             }
         }
     },
 
+    computed: {
+        ...mapState('base', {
+            addressList: state => state.addressList
+        })
+    },
+
     created () {
+        this.addressListX()
         this.search()
     },
 
     methods: {
-        ...mapActions('base', ['freightListX', 'createFreightX', 'updateFreightX', 'removeFreightX']),
+        ...mapActions('base', ['addressListX', 'priceListX']),
 
         search () {
             this.pagination.page = 1
-            this.getFreightList()
+            this.getPriceList()
         },
 
         onPageChange (page) {
             this.pagination.page = page
-            this.getFreightList()
+            this.getPriceList()
         },
 
-        async getFreightList () {
+        async getPriceList () {
             this.isLoading = true
-            const response = await this.freightListX({
+            const response = await this.priceListX({
                 page: this.pagination.page,
-                pageSize: this.pagination.pageSize
+                pageSize: this.pagination.pageSize,
+                spec: this.searchForm.spec,
+                type: this.searchForm.type,
+                address: this.searchForm.address,
+                supplierName: this.searchForm.supplierName
             })
             this.isLoading = false
             if (response.code === 200) {
@@ -161,55 +150,11 @@ export default {
             }
         },
 
-        // 增加费率设置
-        createFreight () {
-            this.createVisible = true
-        },
-
-        // 确认设置
-        async confirmCreate () {
-            try {
-                const valid = await this.$refs['createForm'].validate()
-                if (!valid) return
-                this.operateLoading = true
-                const response = await this.createFreightX(this.createForm)
-                this.operateLoading = false
-                if (response.code === 200) {
-                    this.$message({
-                        type: 'success',
-                        message: '添加成功'
-                    })
-                    this.createVisible = false
-                    this.getFreightList()
-                } else {
-                    this.$message({
-                        type: 'error',
-                        message: response.msg
-                    })
-                }
-            } catch (exp) {
-                console.log(exp)
-                this.operateLoading = false
-            }
-        },
-
-        // 取消设置
-        cancelCreate () {
-            this.createVisible = false
-        },
-
-        // 关闭
-        closeCreateHandler () {
-            this.$refs['createForm'].resetFields()
-        },
-
-        // 修改费率设置
-        updateFreight (row) {
+        updatePrice (row) {
             this.updateVisible = true
             this.$nextTick(() => {
-                this.updateForm.freightId = row.freightId
-                this.updateForm.address = row.address
-                this.updateForm.freight = row.freight
+                this.updateForm.supplierValueId = row.supplierValueId
+                this.updateForm.value = row.value
             })
         },
 
@@ -242,35 +187,6 @@ export default {
         // 取消设置
         cancelUpdate () {
             this.updateVisible = false
-        },
-
-        // 删除费率
-        async removeFreight (row) {
-            try {
-                await this.$confirm('确认删除该条记录？', '提示')
-                const response = await this.removeFreightX({
-                    freightId: [row.freightId].join(',')
-                })
-                if (response.code === 200) {
-                    this.$message({
-                        type: 'success',
-                        message: '删除成功'
-                    })
-                    this.getFreightList()
-                } else {
-                    this.$message({
-                        type: 'error',
-                        message: response.msg
-                    })
-                }
-            } catch (exp) {
-                console.log(exp)
-            }
-        },
-
-        // 关闭
-        closeUpdateHandler () {
-            this.$refs['updateForm'].resetFields()
         }
     }
 }

@@ -4,8 +4,8 @@
             <transition name="logo">
                 <div class="header-logo" v-show="!isCollapse">
                     <div class="title">
-                        <img src="./assets/images/favicon.png" alt="">
-                        <!-- <span>宙斯采销系统</span> -->
+                        <!-- <img src="./assets/images/favicon.png" alt=""> -->
+                        <span>钢财有道</span>
                     </div>
                 </div>
             </transition>

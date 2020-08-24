@@ -1,33 +1,7 @@
 <template>
     <div class="base-freight page">
         <div class="filter clearfix">
-            <el-form ref="searchForm" :model="searchForm" size="small" inline>
-                <el-form-item prop="spec" label="规格">
-                    <el-input v-model="searchForm.spec" placeholder="支持关键词/模糊查询"></el-input>
-                </el-form-item>
-
-                <el-form-item label="类别" prop="type">
-                    <el-select v-model="searchForm.type" clearable>
-                        <el-option value="黑管">黑管</el-option>
-                        <el-option value="热镀锌">热镀锌</el-option>
-                        <el-option value="镀锌带">镀锌带</el-option>
-                    </el-select>
-                </el-form-item>
-
-                <el-form-item label="供应商名称" prop="supplierName">
-                    <el-input v-model="searchForm.supplierName" placeholder="支持关键词/模糊搜索"></el-input>
-                </el-form-item>
-
-                <el-form-item prop="address" label="所在地">
-                    <el-select v-model="searchForm.address" placeholder="全部" clearable>
-                        <el-option :label="item.address" :value="item.address" v-for="(item, index) in addressList" :key="index"></el-option>
-                    </el-select>
-                </el-form-item>
-
-                <el-form-item>
-                    <el-button type="primary" @click="search" icon="el-icon-search">查询</el-button>
-                </el-form-item>
-            </el-form>
+           <el-button size="small" type="primary" icon="el-icon-search">批量查询</el-button>
         </div>
 
         <div v-loading="isLoading">
@@ -83,8 +57,14 @@ export default {
                     field: 'supplierName',
                     name: '供应商'
                 }, {
+                    field: 'daPrice',
+                    name: '到岸单价'
+                }, {
+                    field: 'purePrice',
+                    name: '开单价'
+                }, {
                     field: 'inventoryAmount',
-                    name: '库存数量(件)'
+                    name: '库存'
                 }, {
                     field: 'perAmount',
                     name: '包装'
@@ -115,30 +95,34 @@ export default {
                         return ((perimeter / 3.14 - land) * land * long * 0.02466 * amount * inventoryAmount / 1000).toFixed(2)
                     }
                 }, {
+                    field: 'freight',
+                    name: '运费'
+                }, {
+                    field: 'value',
+                    name: '出厂价'
+                }, {
+                    field: 'benifit',
+                    name: '厂家优惠'
+                }, {
                     field: 'operate',
                     name: '操作',
                     render: (h, { row }) => {
                         return h('div', [
                             h('el-button', {
                                 props: {
-                                    type: 'warning',
+                                    type: 'primary',
                                     size: 'small'
                                 },
                                 on: {
                                     click: () => {
-                                        this.updatePrice(row)
+                                        this.goOrder(row)
                                     }
                                 }
-                            }, '修改')
+                            }, '下单')
                         ])
                     }
                 }
-            ],
-            updateVisible: false,
-            updateForm: {
-                value: '',
-                supplierValueId: ''
-            }
+            ]
         }
     },
 
@@ -154,21 +138,22 @@ export default {
     },
 
     methods: {
-        ...mapActions('base', ['addressListX', 'inventoryListX']),
+        ...mapActions('base', ['addressListX']),
+        ...mapActions('price', ['productListX']),
 
         search () {
             this.pagination.page = 1
-            this.getInventoryList()
+            this.getProductList()
         },
 
         onPageChange (page) {
             this.pagination.page = page
-            this.getInventoryList()
+            this.getProductList()
         },
 
-        async getInventoryList () {
+        async getProductList () {
             this.isLoading = true
-            const response = await this.inventoryListX({
+            const response = await this.productListX({
                 page: this.pagination.page,
                 pageSize: this.pagination.pageSize,
                 spec: this.searchForm.spec,
@@ -183,43 +168,8 @@ export default {
             }
         },
 
-        updateInventory (row) {
-            this.updateVisible = true
-            this.$nextTick(() => {
-                this.updateForm.supplierValueId = row.supplierValueId
-                this.updateForm.value = row.value
-            })
-        },
+        goOrder () {
 
-        // 确认修改
-        async confirmUpdate () {
-            try {
-                const valid = await this.$refs['updateForm'].validate()
-                if (!valid) return
-                this.operateLoading = true
-                const response = await this.updateFreightX(this.updateForm)
-                this.operateLoading = false
-                if (response.code === 200) {
-                    this.$message({
-                        type: 'success',
-                        message: '修改成功'
-                    })
-                    this.updateVisible = false
-                    this.getFreightList()
-                } else {
-                    this.$message({
-                        type: 'error',
-                        message: response.msg
-                    })
-                }
-            } catch (exp) {
-                this.operateLoading = false
-            }
-        },
-
-        // 取消设置
-        cancelUpdate () {
-            this.updateVisible = false
         }
     }
 }
