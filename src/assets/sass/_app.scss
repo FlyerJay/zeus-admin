@@ -1,3 +1,180 @@
 @charset "UTF-8";
 @import "./common";
 /*重置外部引用样式*/
+
+//form表单
+.el-form--label-top {
+    .el-form-item__label {
+        line-height: 30px;
+        padding: 0;
+    }
+    .el-form-item {
+        margin-bottom: 10px;
+    }
+}
+.search-card {
+    margin-bottom: 20px;
+    .el-card__body {
+        padding: 30px 20px 12px;
+    }
+}
+.search-form {
+    .el-form-item__label {
+        width: 100px;
+    }
+    .btn-item {
+       padding-left: 100px;
+    }
+}
+
+.el-form-item {
+    .el-form-item {
+        margin: 0;
+    }
+}
+
+//对话框
+.dialog-wrap{
+    .el-dialog__header {
+        padding: 15px 20px;
+        text-align: center;
+        border-bottom: 1px solid $border;
+    }
+    .el-form {
+        padding: 0 60px;
+    }
+    .el-dialog__footer {
+        padding: 15px 20px;
+        border-top: 1px solid $border;
+    }
+}
+
+/*应用级样式*/
+
+//公共样式
+.link-blue{
+    color: $blue;
+    &:hover {
+        color: darken($blue, 10%)
+    }
+}
+
+//主要内容页
+.page-main{
+    height: 100%;
+    position: relative;
+    padding: 0px 20px;
+    .header{
+        text-align: center;
+        height: 40px;
+        line-height: 40px;
+    }
+}
+
+.card-title {
+    font-weight: bold;
+    font-style: normal;
+    margin-bottom: 10px;
+    color: #666666;
+    font-size: 16px;
+}
+
+.filter {
+    line-height: 40px;
+    margin-bottom: 10px;
+
+    .filter-item {
+        padding: 8px 30px;
+        border: 1px solid $border;
+        margin-right: 15px;
+        border-radius: 3px;
+    }
+}
+
+.pagination {
+    text-align: right;
+    margin-top: 10px;
+}
+
+.el-table {
+    border-radius: 3px;
+    th {
+        background-color: #E6E6E6;
+        color: #666666;
+    }
+}
+
+.el-button {
+    &.el-button--primary {
+        background-color: $primary;
+        border-color: $primary;
+    }
+
+    &.el-button--danger {
+        background-color: $error;
+        border-color: $error;
+    }
+
+    &.el-button--warning {
+        background-color: $warning;
+        border-color: $warning;
+    }
+
+    &.el-button--success {
+        background-color: $success;
+        border-color: $success;
+    }
+}
+
+.el-tag {
+    &.el-tag--success {
+        color: $success;
+        border-color: lighten($success, 20%);
+        background-color: lighten($success, 50%);
+    }
+
+    &.el-tag--danger {
+        color: $error;
+        border-color: lighten($error, 20%);
+        background-color: lighten($error, 50%);
+    }
+
+    &.el-tag--warning {
+        color: $warning;
+        border-color: lighten($warning, 20%);
+        background-color: lighten($warning, 50%);
+    }
+
+    &.el-tag--primary {
+        color: $primary;
+        border-color: lighten($primary, 20%);
+        background-color: lighten($primary, 50%);
+    }
+}
+
+.el-dialog__wrapper {
+    .el-dialog {
+        border-radius: 3px;
+        overflow: hidden;
+
+        .el-dialog__header {
+            padding: 15px 20px;
+            background-color: $neut4;
+            
+            .el-dialog__title {
+                color: $neut2;
+                font-size: 16px;
+            }
+
+            .el-dialog__headerbtn {
+                top: 17px;
+                color: $neut2;
+                font-size: 18px;
+
+                .el-dialog__close {
+                    color: $neut2;
+                }
+            }
+        }
+    }
+}

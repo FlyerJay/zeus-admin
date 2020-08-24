@@ -57,7 +57,7 @@ export default {
 
     computed: {
         menuData () {
-            return [menu.employ]
+            return [menu.price, menu.base]
         },
 
         ...mapState('company', {
@@ -96,6 +96,11 @@ export default {
 
     created () {
         this.companyListX()
+        const isLogin = this.isLogin()
+        if (!isLogin) {
+            this.$router.replace('/user/login')
+            return
+        }
         this.userInfoX()
     },
 
@@ -114,6 +119,10 @@ export default {
 
         logout () {
             this.$router.replace('/user/login')
+        },
+
+        isLogin () {
+            return !!this.$cookie.get('userId')
         }
     }
 }
@@ -126,6 +135,7 @@ $menu-background-color: white;
 
 .layout {
     height: 100vh;
+    background-color: $neut4;
 
     .layout-header {
         background-color: $menu-background-color;
@@ -261,9 +271,13 @@ $menu-background-color: white;
     }
 
     .layout-main {
+        height: calc(100vh - 75px);
+        overflow: auto;
         position: relative;
+        margin: 0 15px;
+        margin-top: 15px;
+        background-color: #fff;
         padding: 15px;
-        background-color: $neut4;
     }
 }
 </style>

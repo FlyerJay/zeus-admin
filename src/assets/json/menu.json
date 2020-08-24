@@ -1,10 +1,70 @@
 {
-    "employ": {
-        "type": "item",
+    "price": {
+        "type": "subMenu",
         "parentCode": "",
-        "menuCode": "employ",
-        "menuName": "员工管理",
-        "menuIcon": "el-icon-s-custom",
-        "subMenus": []
+        "menuCode": "price",
+        "menuName": "宙斯报价",
+        "menuIcon": "el-icon-coin",
+        "subMenus": [
+            {
+                "type": "item",
+                "parentCode": "price",
+                "menuCode": "priceSearch",
+                "menuName": "现货查询",
+                "menuIcon": ""
+            }, {
+                "type": "item",
+                "parentCode": "price",
+                "menuCode": "priceBatch",
+                "menuName": "批量查询",
+                "menuIcon": ""
+            }, {
+                "type": "item",
+                "parentCode": "price",
+                "menuCode": "priceCart",
+                "menuName": "购物车",
+                "menuIcon": ""
+            }, {
+                "type": "item",
+                "parentCode": "price",
+                "menuCode": "priceOrder",
+                "menuName": "订单列表",
+                "menuIcon": ""
+            }
+        ]
+    },
+    "base": {
+        "type": "subMenu",
+        "parentCode": "",
+        "menuCode": "base",
+        "menuName": "基础信息",
+        "menuIcon": "el-icon-files",
+        "subMenus": [
+            {
+                "type": "item",
+                "parentCode": "base",
+                "menuCode": "baseSupplier",
+                "menuName": "供应商设置",
+                "menuIcon": ""
+            }, {
+                "type": "item",
+                "parentCode": "base",
+                "menuCode": "baseFreight",
+                "menuName": "运费设置",
+                "menuIcon": ""
+            }, {
+                "type": "item",
+                "parentCode": "base",
+                "menuCode": "basePrice",
+                "menuName": "价格信息",
+                "menuIcon": ""
+            }, {
+                "type": "item",
+                "parentCode": "base",
+                "menuCode": "baseInventory",
+                "menuName": "库存信息",
+                "menuIcon": ""
+            }
+        ]
     }
 }

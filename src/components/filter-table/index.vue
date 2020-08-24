@@ -239,7 +239,7 @@
             },
             layout: {
                 type: String,
-                default: 'total, sizes, prev, pager, next'
+                default: 'total, prev, pager, next'
             },
             pageSizes: {
                 type: Array,
