@@ -62,6 +62,7 @@
 </template>
 <script>
 import { mapState, mapActions } from 'vuex'
+import { computeWeight } from '../../assets/js/utils'
 
 export default {
     name: 'base-supplier',
@@ -114,28 +115,17 @@ export default {
                 }, {
                     field: 'perWeight',
                     name: '单支重量(kg)',
-                    formatter: row => {
-                        const specArr = row.spec.split('*')
-                        const height = Number(specArr[0])
-                        const width = Number(specArr[1])
-                        const land = Number(specArr[2])
-                        const long = Number(row.long) ? Number(row.long) : 6
-                        const perimeter = 2 * height + 2 * width
-                        return ((perimeter / 3.14 - land) * land * long * 0.02466).toFixed(2)
+                    formatter: row => {                        
+                        return computeWeight(row.spec, row.long).toFixed(2)
                     }
                 }, {
                     field: 'inventoryWeight',
                     name: '库存重量(吨)',
                     formatter: row => {
-                        const specArr = row.spec.split('*')
-                        const height = Number(specArr[0])
-                        const width = Number(specArr[1])
-                        const land = Number(specArr[2])
-                        const long = Number(row.long) ? Number(row.long) : 6
-                        const perimeter = 2 * height + 2 * width
                         const amount = Number(row.perAmount)
                         const inventoryAmount = Number(row.inventoryAmount)
-                        return ((perimeter / 3.14 - land) * land * long * 0.02466 * amount * inventoryAmount / 1000).toFixed(2)
+                        const realAmt = amount * inventoryAmount
+                        return (computeWeight(row.spec, row.long, realAmt) / 1000).toFixed(2)
                     }
                 }, {
                     field: 'freight',

@@ -12,10 +12,13 @@
                 @selection-change="selectionChange">
                 <template slot="append" v-if="dataList.length !== 0">
                     <div class="custom-summary">
-                        已选商品(含运费)：{{ checkedAmount | currency }}
-                        (吨位：{{ checkedWeight | currency }})
+                        <template v-if="checkedAmount">
+                            <span>已选商品(含运费)：{{ checkedAmount | currency }}</span>
+                            <span>(吨位：{{ checkedWeight | currency }})</span>
+                        </template>
+                        <span v-else>请选择</span>
 
-                        <el-button :disabled="checkedAmount === 0" type="warning" style="margin-left: 20px" size="mini" icon="el-icon-check" @click="submitOrder">提交</el-button>
+                        <el-button :disabled="checkedAmount === 0" type="primary" style="margin-left: 20px" size="mini" icon="el-icon-check" @click="submitOrder">提交</el-button>
                     </div>
                 </template>
             </filter-table>
@@ -24,6 +27,7 @@
 </template>
 <script>
 import { mapActions } from 'vuex'
+import { computeWeight } from '../../assets/js/utils'
 
 export default {
     name: 'price-cart',
@@ -64,16 +68,11 @@ export default {
                             row.chartWeight = 0
                             return ''
                         }
-                        const specArr = row.spec.split('*')
-                        const height = Number(specArr[0])
-                        const width = Number(specArr[1])
-                        const land = Number(specArr[2])
-                        const long = Number(row.long) ? Number(row.long) : 6
                         const per = Number(row.perAmount)
-                        const perimeter = 2 * height + 2 * width
                         const amount = Number(row.chartAmount)
-                        row.chartWeight = (((perimeter / 3.14 - land) * land * long * 0.02466 * amount * per) / 1000).toFixed(2)
-                        return (((perimeter / 3.14 - land) * land * long * 0.02466 * amount * per) / 1000).toFixed(2)
+                        
+                        row.chartWeight = (computeWeight(row.spec, row.long, amount * per) / 1000).toFixed(2)
+                        return row.chartWeight
                     }
                 }, {
                     field: 'purePrice',
@@ -134,15 +133,10 @@ export default {
 
         checkedWeight () {
             const total = this.checkedData.reduce((a, b) => {
-                const specArr = b.spec.split('*')
-                const height = Number(specArr[0])
-                const width = Number(specArr[1])
-                const land = Number(specArr[2])
-                const long = Number(b.long) ? Number(b.long) : 6
                 const per = Number(b.perAmount)
-                const perimeter = 2 * height + 2 * width
                 const amount = Number(b.chartAmount)
-                return a + ((perimeter / 3.14 - land) * land * long * 0.02466 * amount * per) / 1000
+                const weight = computeWeight(b.spec, b.long, per * amount) / 1000
+                return a + weight
             }, 0)
             return Number(total.toFixed(2))
         }

@@ -59,3 +59,15 @@ export const formatDate = function (date, fmt = 'YYYY-MM-DD') {
     if (!date) return ''
     return moment(date).format(fmt)
 }
+
+// 重量公式
+export const computeWeight = function (spec, long = 6, amount = 1, type = '黑管') {
+    if (type === '黑管') {
+        const specArr = spec.split('*')
+        const height = Number(specArr[0])
+        const width = Number(specArr[1])
+        const land = Number(specArr[2])
+        const perimeter = 2 * height + 2 * width
+        return (perimeter / 3.14 - land) * land * long * 0.02466 * amount
+    }
+}

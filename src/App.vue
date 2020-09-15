@@ -4,8 +4,7 @@
             <transition name="logo">
                 <div class="header-logo" v-show="!isCollapse">
                     <div class="title">
-                        <!-- <img src="./assets/images/favicon.png" alt=""> -->
-                        <span>钢财有道</span>
+                        <img src="./assets/images/font-logo.png" alt="">
                     </div>
                 </div>
             </transition>
@@ -162,13 +161,7 @@ $menu-background-color: white;
             height: 60px;
 
             img {
-                width: 35px;
                 height: 35px;
-            }
-
-            span {
-                font-size: 16px;
-                margin-left: 5px;
             }
         }
 

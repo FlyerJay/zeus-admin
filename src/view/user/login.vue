@@ -10,7 +10,7 @@
 
         <el-card shadow="hover" class="login-card">
             <template #header>
-                <p>钢财有道</p>
+                <img src="../../assets/images/font-logo.png">
             </template>
 
             <el-form :model="form" status-icon :rules="rules" ref="form">
@@ -45,11 +45,8 @@
         <!-- 页脚 -->
         <div class="footer">
             <div class="regular">
-                <div>联系电话：
-                    <span>58711629</span>
-                    <span>58700476</span>
-                    <span>58798979</span>
-                    <span>58700476</span>
+                <div>
+                    <span>联系电话：13390929936</span>
                 </div>
 
                 <div>
@@ -184,6 +181,12 @@ export default {
         top: 50%;
         left: 50%;
         transform: translate(-50%, -60%);
+
+        .el-card__header {
+            img {
+                height: 30px;
+            }
+        }
 
         .login-btn {
             width: 100%;
