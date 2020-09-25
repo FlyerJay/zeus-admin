@@ -66,5 +66,21 @@
                 "menuIcon": ""
             }
         ]
+    },
+    "platform": {
+        "type": "subMenu",
+        "parentCode": "",
+        "menuCode": "platform",
+        "menuName": "开放平台",
+        "menuIcon": "el-icon-s-platform",
+        "subMenus": [
+            {
+                "type": "item",
+                "parentCode": "platform",
+                "menuCode": "platformAccount",
+                "menuName": "账号管理",
+                "menuIcon": ""
+            }
+        ]
     }
 }

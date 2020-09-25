@@ -14,7 +14,7 @@
             <div class="header-right">
                 <a class="header-btn fl">
                     <i class="el-icon-user-solid"></i>
-                    <span>{{ companyObj[userInfo.comId] }} |</span>
+                    <span>{{ userInfo.externalName }} |</span>
                     <span>{{ userInfo.userName }}</span>
                 </a>
                 <a class="header-btn fl" @click="logout">
@@ -59,21 +59,9 @@ export default {
             return [menu.price, menu.base]
         },
 
-        ...mapState('company', {
-            companyList: state => state.companyList
-        }),
-
         ...mapState('user', {
             userInfo: state => state.userInfo
-        }),
-
-        companyObj () {
-            const obj = {}
-            this.companyList.forEach(item => {
-                obj[item.comId] = item.comName
-            })
-            return obj
-        }
+        })
     },
 
     data () {
@@ -94,7 +82,6 @@ export default {
     },
 
     created () {
-        this.companyListX()
         const isLogin = this.isLogin()
         if (!isLogin) {
             this.$router.replace('/user/login')
@@ -104,7 +91,6 @@ export default {
     },
 
     methods: {
-        ...mapActions('company', ['companyListX']),
         ...mapActions('user', ['userInfoX']),
 
         toggleMenu () {
@@ -121,7 +107,7 @@ export default {
         },
 
         isLogin () {
-            return !!this.$cookie.get('userId')
+            return !!this.$storage.get('gcyd_token')
         }
     }
 }

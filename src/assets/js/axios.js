@@ -1,12 +1,21 @@
 import axios from 'axios'
 import router from '../../router'
 import Vue from 'vue'
+import { getKey } from './utils'
 
 const $vm = new Vue()
 
 axios.defaults.timeout = 50000
 axios.defaults.headers.post['Content-Type'] = 'application/json'
-axios.defaults.baseURL = '/zues/api'
+axios.defaults.baseURL = '/zeus/api'
+
+axios.interceptors.request.use(async (request) => {
+    const token = getKey('gcyd_token')
+    if (token) {
+        request.headers['Authorization'] = `Bearer ${token}`
+    }
+    return request
+})
 
 // 添加一个响应拦截器
 axios.interceptors.response.use(

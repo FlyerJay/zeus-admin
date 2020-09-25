@@ -14,26 +14,26 @@
             </template>
 
             <el-form :model="form" status-icon :rules="rules" ref="form">
-                <el-form-item prop="userId">
-                    <el-input v-model="form.userId" @keyup.enter.native="submitForm" placeholder="请输入账号">
+                <el-form-item prop="type">
+                    <el-select v-model="form.type" placeholder="请选择账号类型" style="width: 100%">
+                        <el-option
+                            v-for="(item, index) in typeList"
+                            :key="index"
+                            :value="item.value"
+                            :label="item.label"
+                            >
+                        </el-option>
+                    </el-select>
+                </el-form-item>
+
+                <el-form-item prop="userName">
+                    <el-input v-model="form.userName" @keyup.enter.native="submitForm" :placeholder="placeholderUserName">
                     </el-input>
                 </el-form-item>
 
                 <el-form-item prop="password">
-                    <el-input type="password" v-model="form.password" autocomplete="off" placeholder="输入登录密码">
+                    <el-input type="password" v-model="form.password" autocomplete="off" :placeholder="placeholderPassword">
                     </el-input>
-                </el-form-item>
-
-                <el-form-item prop="comId">
-                    <el-select type="password" v-model="form.comId" autocomplete="off" placeholder="请选择公司" style="width: 100%">
-                        <el-option
-                            v-for="(item, index) in companyList"
-                            :key="index"
-                            :value="item.comId"
-                            :label="item.comName"
-                            >
-                        </el-option>
-                    </el-select>
                 </el-form-item>
 
                 <el-form-item>
@@ -63,7 +63,8 @@
     </div>
 </template>
 <script>
-import { mapState, mapActions } from 'vuex'
+import { mapActions } from 'vuex'
+import md5 from 'blueimp-md5'
 
 export default {
     name: 'login',
@@ -71,40 +72,74 @@ export default {
     data () {
         return {
             form: {
-                userId: '',
-                password: ''
+                userName: '',
+                password: '',
+                type: 'user'
             },
             rules: {
-                userId: [
+                type: [
                     {
                         required: true,
-                        message: '请输入账号',
+                        message: '请选择账号类型',
+                        trigger: 'change'
+                    }
+                ],
+                userName: [
+                    {
+                        required: true,
+                        message: '登录账号不能为空',
                         trigger: 'blur'
                     }
                 ],
                 password: [
                     {
                         required: true,
-                        message: '请输入登录密码',
-                        trigger: 'blur'
-                    }
-                ],
-                comId: [
-                    {
-                        required: true,
-                        message: '请选择公司',
+                        message: '登录密码不能为空',
                         trigger: 'blur'
                     }
                 ]
             },
-            isLoading: false
+            isLoading: false,
+            typeList: [
+                {
+                    label: '员工账号',
+                    value: 'user'
+                }, {
+                    label: '企业账号',
+                    value: 'external'
+                }
+            ]
         }
     },
 
     computed: {
-        ...mapState('company', {
-            companyList: state => state.companyList
-        })
+        placeholderUserName () {
+            var placeholder = ''
+            switch (this.form.type) {
+                case 'user':
+                    placeholder = '输入手机号'
+                    break
+                case 'external':
+                    placeholder = '输入用户名或AccessId'
+                    break
+            }
+
+            return placeholder
+        },
+
+        placeholderPassword () {
+            var placeholder = ''
+            switch (this.form.type) {
+                case 'user':
+                    placeholder = '输入密码'
+                    break
+                case 'external':
+                    placeholder = '输入密码或AccessSecret'
+                    break
+            }
+
+            return placeholder
+        }
     },
 
     methods: {
@@ -115,9 +150,21 @@ export default {
                 const valid = await this.$refs['form'].validate()
                 if (!valid) return
                 this.isLoading = true
-                const response = await this.userLoginX(this.form)
+                const response = await this.userLoginX({
+                    userName: this.form.userName,
+                    password: this.isNeedMd5() ? md5(this.form.password) : this.form.password,
+                    type: this.form.type
+                })
                 this.isLoading = false
                 if (response.code === 200) {
+                    if (response.data.userInfo.leading) {
+                        switch (response.data.userInfo.leading) {
+                            case 'setting':
+                                this.$router.replace('/user/setting')
+                                break
+                        }
+                        return
+                    }
                     this.$router.replace('/')
                 } else {
                     this.$message({
@@ -134,6 +181,10 @@ export default {
                     })
                 }
             }
+        },
+
+        isNeedMd5 () {
+            return this.form.userName.length !== 24 || this.from.password.length !== 32
         }
     }
 }

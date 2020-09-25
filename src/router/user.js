@@ -1,10 +1,12 @@
-const userLogin = () => import('../view/user/login')
-
 const routes = [
   {
     path: '/user/login',
     name: 'userLogin',
-    component: userLogin
+    component: () => import('../view/user/login')
+  }, {
+    path: '/user/setting',
+    name: 'userSetting',
+    component: () => import('../view/user/setting')
   }
 ]
 
