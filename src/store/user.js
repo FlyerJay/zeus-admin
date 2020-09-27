@@ -1,11 +1,14 @@
 import axios from '../assets/js/axios'
 import { setKey, getKey } from '../assets/js/utils'
+import menu from '../assets/json/menu'
 
 export default {
     namespaced: true,
 
     state: {
-        userInfo: {}
+        userInfo: {},
+
+        menuData: []
     },
 
     mutations: {
@@ -16,6 +19,15 @@ export default {
 
         setUserToken(state, token) {
             setKey('gcyd_token', token)
+        },
+
+        setMenu(state, user) {
+            const menuData = []
+            // 系统管理员账号
+            if (user.accountType === 'A' && user.type === 'external') {
+                menuData.push(menu.platform)
+            }
+            state.menuData = menuData
         }
     },
 
@@ -25,6 +37,7 @@ export default {
             if (response.code === 200) {
                 commit('setUserInfo', response.data.userInfo)
                 commit('setUserToken', response.data.token)
+                commit('setMenu', response.data.userInfo)
             }
             return response
         },
@@ -47,6 +60,7 @@ export default {
                 }
             }
             commit('setUserInfo', userInfo)
+            commit('setMenu', userInfo)
             return userInfo
         }
     }

@@ -184,7 +184,7 @@ export default {
         },
 
         isNeedMd5 () {
-            return this.form.userName.length !== 24 || this.from.password.length !== 32
+            return this.form.password.length !== 32
         }
     }
 }

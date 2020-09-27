@@ -44,7 +44,6 @@
 
 <script>
 import MenuItem from '@/components/MenuItem'
-import menu from './assets/json/menu'
 import { mapActions, mapState } from 'vuex'
 
 export default {
@@ -55,12 +54,9 @@ export default {
     },
 
     computed: {
-        menuData () {
-            return [menu.price, menu.base]
-        },
-
         ...mapState('user', {
-            userInfo: state => state.userInfo
+            userInfo: state => state.userInfo,
+            menuData: state => state.menuData
         })
     },
 

@@ -71,3 +71,17 @@ export const computeWeight = function (spec, long = 6, amount = 1, type = '黑�
         return (perimeter / 3.14 - land) * land * long * 0.02466 * amount
     }
 }
+
+/**
+ * 复制到剪切板
+ * @param {*} message 
+ */
+export const copyToClipbord = (message) => {
+    var input = document.createElement('input')
+    input.value = message
+    document.body.appendChild(input)
+    input.select()
+    input.setSelectionRange(0, input.value.length)
+    document.execCommand('Copy')
+    document.body.removeChild(input)
+}
