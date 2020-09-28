@@ -1,10 +1,10 @@
 <template>
     <div class="user-setting">
-        <h3>由于您还没有设置登录账号，希望您能完成下面的设置，下次登录您就可以使用设置的账号密码进行登录了，当然您依然可以通过AccessId方式进行登录。</h3>
+        <h3>由于您还没有设置登录账号，希望您能完成下面的设置，下次登录您就可以使用设置的账号密码进行登录了，当然您依然可以通过AccessId进行登录。</h3>
 
         <el-form :model="form" :rules="rules" inline class="form" ref="form">
             <el-form-item prop="externalName" label="企业名称">
-                <el-input v-model="form.externalName" placeholder="请输入企业名称" style="width: 400px"></el-input>
+                <el-input v-model="form.externalName" :disabled="userInfo.accountType === 'T'" placeholder="请输入企业名称" style="width: 400px"></el-input>
             </el-form-item>
 
             <el-form-item prop="userName" label="登录账号">

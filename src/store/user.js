@@ -24,8 +24,12 @@ export default {
         setMenu(state, user) {
             const menuData = []
             // 系统管理员账号
-            if (user.accountType === 'A' && user.type === 'external') {
-                menuData.push(menu.platform)
+            if (user.type === 'external') {
+                if (user.accountType === 'A') {
+                    menuData.push(menu.platform)
+                } else {
+                    menuData.push(menu.manage)
+                }
             }
             state.menuData = menuData
         }

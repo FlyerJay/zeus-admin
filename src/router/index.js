@@ -4,6 +4,7 @@ import user from './user'
 import base from './base'
 import price from './price'
 import platform from './plarform'
+import manage from './manage'
 
 Vue.use(Router)
 
@@ -12,6 +13,7 @@ export default new Router({
         ...user,
         ...base,
         ...price,
-        ...platform
+        ...platform,
+        ...manage
     ]
 })

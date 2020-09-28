@@ -72,13 +72,35 @@
         "parentCode": "",
         "menuCode": "platform",
         "menuName": "开放平台",
-        "menuIcon": "el-icon-s-platform",
+        "menuIcon": "el-icon-office-building",
         "subMenus": [
             {
                 "type": "item",
                 "parentCode": "platform",
                 "menuCode": "platformAccount",
                 "menuName": "账号管理",
+                "menuIcon": ""
+            }
+        ]
+    },
+    "manage": {
+        "type": "subMenu",
+        "parentCode": "",
+        "menuCode": "manage",
+        "menuName": "管理后台",
+        "menuIcon": "el-icon-setting",
+        "subMenus": [
+            {
+                "type": "item",
+                "parentCode": "manage",
+                "menuCode": "manageMember",
+                "menuName": "成员管理",
+                "menuIcon": ""
+            }, {
+                "type": "item",
+                "parentCode": "manage",
+                "menuCode": "manageRole",
+                "menuName": "角色管理",
                 "menuIcon": ""
             }
         ]

@@ -5,6 +5,7 @@ import user from './user'
 import base from './base'
 import price from './price'
 import platform from './platform'
+import manage from './manage'
 
 Vue.use(Vuex)
 
@@ -14,6 +15,7 @@ export default new Vuex.Store({
         user,
         base,
         price,
-        platform
+        platform,
+        manage
     }
 })
