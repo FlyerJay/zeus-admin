@@ -15,7 +15,7 @@ export default {
 
     actions: {
         async addressListX ({ commit }, params) {
-            const response = await axios.get('/supplier/address', { params })
+            const response = await axios.get('/freight/address', { params })
             if (response.code === 200) {
                 commit('setAddressList', response.data)
             }
