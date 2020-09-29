@@ -57,6 +57,10 @@ export const formatMoney = function (number) {
 // 格式化日期
 export const formatDate = function (date, fmt = 'YYYY-MM-DD') {
     if (!date) return ''
+    if (/^\d{8}$/.test(date)) {
+        date = String(date)
+        return moment(date.replace(/(\d{4})(\d{2})(\d{2})/, '$1-$2-$3')).format(fmt)
+    }
     return moment(date).format(fmt)
 }
 

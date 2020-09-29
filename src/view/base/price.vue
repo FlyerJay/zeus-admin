@@ -62,7 +62,7 @@ export default {
             },
             pagination: {
                 page: 1,
-                pageSize: 10,
+                pageSize: 12,
                 total: 0
             },
             columns: [
@@ -71,7 +71,8 @@ export default {
                     name: '规格'
                 }, {
                     field: 'lastUpdateTime',
-                    name: '最近更新时间'
+                    name: '最近更新时间',
+                    formatter: row => this.$date(row.lastUpdateTime)
                 }, {
                     field: 'type',
                     name: '类别'
@@ -79,28 +80,12 @@ export default {
                     field: 'supplierName',
                     name: '供应商'
                 }, {
+                    field: 'address',
+                    name: '地址'
+                }, {
                     field: 'value',
                     name: '出厂价（元/吨）'
                 }
-                // {
-                //     field: 'operate',
-                //     name: '操作',
-                //     render: (h, { row }) => {
-                //         return h('div', [
-                //             h('el-button', {
-                //                 props: {
-                //                     type: 'warning',
-                //                     size: 'small'
-                //                 },
-                //                 on: {
-                //                     click: () => {
-                //                         this.updatePrice(row)
-                //                     }
-                //                 }
-                //             }, '修改')
-                //         ])
-                //     }
-                // }
             ],
             updateVisible: false,
             updateForm: {
@@ -146,8 +131,8 @@ export default {
             })
             this.isLoading = false
             if (response.code === 200) {
-                this.dataList = response.data.row
-                this.pagination.total = response.data.totalCount
+                this.dataList = response.data.rows
+                this.pagination.total = response.data.count
             }
         },
 

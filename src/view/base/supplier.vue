@@ -197,10 +197,12 @@ export default {
 
         async changeSupplierState (value, supplierId) {
             if (value === 1) {
-                this.openSupplierX({supplierId})
+                await this.openSupplierX({supplierId})
             } else {
-                this.closeSupplierX({supplierId})
+                await this.closeSupplierX({supplierId})
             }
+
+            this.getSupplierList()
         },
 
         updateSupplier (row) {

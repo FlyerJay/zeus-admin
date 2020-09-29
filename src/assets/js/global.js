@@ -6,7 +6,9 @@ export default {
         Vue.filter('currency', formatMoney)
         Vue.filter('date', formatDate)
 
-        Vue.prototype.$date = formatDate
+        Vue.prototype.$date = value => {
+            return formatDate(value, 'YYYY年MM月DD日')
+        } 
         Vue.prototype.$currency = formatMoney
         Vue.prototype.$time = value => {
             return formatDate(value, 'YYYY年MM月DD日 HH:mm:ss')
