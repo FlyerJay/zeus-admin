@@ -52,6 +52,29 @@
             </span>
         </el-dialog>
 
+        <el-dialog :visible.sync="updateVisible" title="添加角色" width="500px" @close="closeCreateHandler">
+            <el-form :model="updateForm" ref="updateForm" label-position="left" :rules="rules" label-width="80px">
+                <el-form-item prop="roleName" label="角色名称">
+                    <el-input v-model="updateForm.roleName" placeholder="请输入"></el-input>
+                </el-form-item>
+
+                <el-form-item prop="permissions" label="角色权限">
+                    <el-cascader collapse-tags clearable v-model="updateForm.permissions" :options="menu" :props="permissionProps" placeholder="请选择" style="width: 100%">
+                    </el-cascader>
+                </el-form-item>
+
+                <el-form-item prop="remark" label="备注">
+                    <el-input v-model="updateForm.remark" type="textarea" :rows="3" placeholder="角色权限备注" style="width: 100%">
+                    </el-input>
+                </el-form-item>
+            </el-form>
+
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="cancelUpdate">取消</el-button>
+                <el-button type="primary" @click="confirmUpdate" :loading="operateLoading">确定</el-button>
+            </span>
+        </el-dialog>
+
         <el-dialog :visible.sync="detailVisible" title="权限详情" width="500px">
             <el-tree
                 ref="tree"
@@ -79,6 +102,7 @@ export default {
             operateLoading: false,
             dataList: [],
             createVisible: false,
+            updateVisible: false,
             detailVisible: false,
             searchForm: {
                 roleName: '',
@@ -88,6 +112,12 @@ export default {
                 roleName: '',
                 remark: '',
                 permissions: ''
+            },
+            updateForm: {
+                roleName: '',
+                remark: '',
+                permissions: '',
+                roleId: ''
             },
             rules: {
                 roleName: [
@@ -141,18 +171,28 @@ export default {
                 }, {
                     field: 'operate',
                     name: '操作',
-                    render: h => {
+                    render: (h, { row }) => {
                         return h('div', [
                             h('el-button', {
                                 props: {
                                     size: 'mini',
                                     type: 'danger'
+                                },
+                                on: {
+                                    click: () => {
+                                        this.removeRole(row)
+                                    }
                                 }
                             }, '删除'),
                             h('el-button', {
                                 props: {
                                     size: 'mini',
                                     type: 'warning'
+                                },
+                                on: {
+                                    click: () => {
+                                        this.updateRole(row)
+                                    }
                                 }
                             }, '修改')
                         ])
@@ -176,7 +216,7 @@ export default {
     },
 
     methods: {
-        ...mapActions('manage', ['roleListPageX', 'createRoleX']),
+        ...mapActions('manage', ['roleListPageX', 'createRoleX', 'updateRoleX', 'removeRoleX']),
 
         search () {
             this.pagination.page = 1
@@ -244,12 +284,83 @@ export default {
             this.$refs['createForm'].resetFields()
         },
 
+        updateRole (row) {
+            this.updateVisible = true
+            this.$nextTick(() => {
+                this.updateForm.roleName = row.roleName
+                this.updateForm.remark = row.remark
+                this.updateForm.permissions = JSON.parse(row.permissions)
+                this.updateForm.roleId = row.roleId
+            })
+        },
+
+        async confirmUpdate () {
+            try {
+                const valid = await this.$refs['updateForm'].validate()
+                if (!valid) return
+                this.operateLoading = true
+                const response = await this.updateRoleX({
+                    roleName: this.updateForm.roleName,
+                    remark: this.updateForm.remark,
+                    permissions: JSON.stringify(this.updateForm.permissions),
+                    roleId: this.updateForm.roleId
+                })
+                this.operateLoading = false
+                if (response.code === 200) {
+                    this.$message({
+                        type: 'success',
+                        message: '修改成功'
+                    })
+                    this.updateVisible = false
+                    this.getRoleList()
+                } else {
+                    this.$message({
+                        type: 'error',
+                        message: response.msg
+                    })
+                }
+            } catch (exp) {
+                this.operateLoading = false
+            }
+        },
+
+        cancelUpdate () {
+            this.updateVisible = false
+        },
+
+        closeUpdateHandler () {
+            this.$refs['updateForm'].resetFields()
+        },
+
         viewPermissions (row) {
             this.selectedPermisiions = JSON.parse(row.permissions)
             this.detailVisible = true
             this.$nextTick(() => {
                 this.$refs['tree'].setCheckedKeys(this.selectedPermisiions.map(item => item[item.length - 1]))
             })
+        },
+
+        async removeRole ({ roleId }) {
+            try {
+                await this.$confirm('确认删除该成团？', '提示')
+                const response = await this.removeRoleX({
+                    roleId
+                })
+                if (response.code === 200) {
+                    this.$message({
+                        type: 'success',
+                        message: '删除成功'
+                    })
+                    this.getRoleList()
+                } else {
+                    this.$message({
+                        type: 'error',
+                        message: response.msg
+                    })
+                }
+            } catch (exp) {
+                console.log(exp)
+            }
         },
 
         deepcopy (obj) {

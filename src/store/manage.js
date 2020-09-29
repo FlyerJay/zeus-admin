@@ -24,6 +24,14 @@ export default {
             return axios.post('/role/create', params)
         },
 
+        updateRoleX (store, params) {
+            return axios.post('/role/update', params)
+        },
+
+        removeRoleX (store, params) {
+            return axios.post('/role/remove', params)
+        },
+
         memberListX (store, params) {
             return axios.get('/member/list', { params })
         },
