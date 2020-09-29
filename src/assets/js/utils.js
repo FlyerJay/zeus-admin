@@ -85,3 +85,7 @@ export const copyToClipbord = (message) => {
     document.execCommand('Copy')
     document.body.removeChild(input)
 }
+
+export const deepCopy = obj => {
+    return JSON.parse(JSON.stringify(obj))
+}

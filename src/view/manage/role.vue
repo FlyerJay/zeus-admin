@@ -11,7 +11,7 @@
                 </el-form-item>
 
                 <el-form-item>
-                    <el-button type="primary" @click="createAccount" icon="el-icon-plus">添加</el-button>
+                    <el-button type="primary" @click="createRole" icon="el-icon-plus">添加</el-button>
                 </el-form-item>
             </el-form>
         </div>
@@ -29,7 +29,7 @@
             </filter-table>
         </div>
 
-        <el-dialog :visible.sync="createVisible" title="添加账号" width="500px" @close="closeCreateHandler">
+        <el-dialog :visible.sync="createVisible" title="添加角色" width="500px" @close="closeCreateHandler">
             <el-form :model="createForm" ref="createForm" label-position="left" :rules="rules" label-width="80px">
                 <el-form-item prop="roleName" label="角色名称">
                     <el-input v-model="createForm.roleName" placeholder="请输入"></el-input>
@@ -202,7 +202,7 @@ export default {
             }
         },
 
-        createAccount () {
+        createRole () {
             this.createVisible = true
         },
 

@@ -1,5 +1,5 @@
 import axios from '../assets/js/axios'
-import { setKey, getKey } from '../assets/js/utils'
+import { setKey, getKey, deepCopy } from '../assets/js/utils'
 import menu from '../assets/json/menu'
 
 export default {
@@ -30,6 +30,26 @@ export default {
                 } else {
                     menuData.push(menu.manage)
                 }
+            } else if (user.type === 'member') {
+                var permissions = {}
+                user.permissions.forEach(per => {
+                    if (permissions[per[0]] instanceof Array) {
+                        permissions[per[0]].push(per[1])
+                    } else {
+                        permissions[per[0]] = []
+                        permissions[per[0]].push(per[1])
+                    }
+                })
+                Object.keys(permissions).forEach(key => {
+                    var menus = deepCopy(menu[key])
+                    var subMenus = []
+                    permissions[key].forEach(subKey => {
+                        const subMenu = menus.subMenus.filter(subMenus => subMenus.menuCode === subKey)[0]
+                        subMenus.push(subMenu)
+                    })
+                    menus.subMenus = subMenus
+                    menuData.push(menus)
+                })
             }
             state.menuData = menuData
         }
