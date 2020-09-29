@@ -43,7 +43,7 @@ export default {
         },
 
         createFreightX (store, params) {
-            return axios.post('/freight/add', params)
+            return axios.post('/freight/create', params)
         },
 
         updateFreightX (store, params) {

@@ -8,6 +8,7 @@
             <filter-table
                 :data="dataList"
                 :columns="columns"
+                :setting="false"
                 border
                 pagination
                 :page-size="pagination.pageSize"
@@ -156,8 +157,8 @@ export default {
             })
             this.isLoading = false
             if (response.code === 200) {
-                this.dataList = response.data.row
-                this.pagination.total = response.data.totalCount
+                this.dataList = response.data.rows
+                this.pagination.total = response.data.count
             }
         },
 
@@ -172,7 +173,9 @@ export default {
                 const valid = await this.$refs['createForm'].validate()
                 if (!valid) return
                 this.operateLoading = true
-                const response = await this.createFreightX(this.createForm)
+                const response = await this.createFreightX(Object.assign({}, this.createForm, {
+                    freight: Number(this.createForm.freight)
+                }))
                 this.operateLoading = false
                 if (response.code === 200) {
                     this.$message({
@@ -219,7 +222,9 @@ export default {
                 const valid = await this.$refs['updateForm'].validate()
                 if (!valid) return
                 this.operateLoading = true
-                const response = await this.updateFreightX(this.updateForm)
+                const response = await this.updateFreightX(Object.assign({}, this.updateForm, {
+                    freight: Number(this.updateForm.freight)
+                }))
                 this.operateLoading = false
                 if (response.code === 200) {
                     this.$message({
@@ -249,7 +254,7 @@ export default {
             try {
                 await this.$confirm('确认删除该条记录？', '提示')
                 const response = await this.removeFreightX({
-                    freightId: [row.freightId].join(',')
+                    freightId: row.freightId
                 })
                 if (response.code === 200) {
                     this.$message({
