@@ -149,8 +149,8 @@ export default {
             })
             this.isLoading = false
             if (response.code === 200) {
-                this.dataList = response.data.row
-                this.pagination.total = response.data.totalCount
+                this.dataList = response.data.rows
+                this.pagination.total = response.data.count
             }
         },
 
