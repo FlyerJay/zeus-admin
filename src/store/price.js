@@ -11,7 +11,7 @@ export default {
 
     actions: {
         productListX (store, params) {
-            return axios.get('/product/list', { params })
+            return axios.get('/inventory/search', { params })
         },
 
         batchListX (store, params) {
